@@ -8,14 +8,14 @@ export const redisClient: any = createClient({
 });
 
 
-// export const connectRedis = async (): Promise<RedisClientType> => {
-//   if (!redisClient.isOpen) {
-//     await redisClient.connect();
-//     console.log('Redis connected');
-//   }
-//   return redisClient;
-// };
-// connectRedis()
+export const connectRedis = async (): Promise<RedisClientType> => {
+  if (!redisClient.isOpen) {
+    await redisClient.connect();
+    console.log('Redis connected');
+  }
+  return redisClient;
+};
+connectRedis()
 
 
 

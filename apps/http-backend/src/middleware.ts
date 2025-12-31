@@ -1,8 +1,7 @@
-// import { JWT_TOKEN } from "@repo/backend-common/config";
+import { JWT_TOKEN } from "@repo/backend-common/config";
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-const JWT_TOKEN = "iritik123"
 
 declare global {
     namespace Express {

@@ -4,13 +4,12 @@ import {
   siginInSchema,
   createRoomSchema,
 } from "@repo/backend-common/type";
-// import { JWT_TOKEN } from "@repo/backend-common/config";
+import { JWT_TOKEN } from "@repo/backend-common/config";
 import jwt from "jsonwebtoken";
 import { prisma } from "@repo/db/client";
 import bcrypt from "bcrypt";
 import { authMiddleware } from "./middleware";
 const app = express();
-const JWT_TOKEN = "iritik123"
 app.use(express.json());
 
 enum errorEndle {
@@ -161,7 +160,7 @@ app.post("/createRoom", authMiddleware, async (req: Request, res: Response) => {
         },
       },
       select: {
-        id : true,
+        id: true,
         username: true,
       },
     });
@@ -174,17 +173,17 @@ app.post("/createRoom", authMiddleware, async (req: Request, res: Response) => {
     }
 
     // normalize pair order (UUID-safe)
-    const [u1, u2] = users.sort((a, b) => a.id.localeCompare(b.id));
-    if(!u1?.id || !u2?.id) {
-      return
+    const [u1, u2] = users.sort((a: any, b: any) => a.id.localeCompare(b.id));
+    if (!u1?.id || !u2?.id) {
+      return;
     }
-    const userAId = u1.id ;
+    const userAId = u1.id;
     const userBId = u2.id;
 
     // create OR return existing room
     const room = await prisma.room.upsert({
       where: {
-        userAId_userBId : { userAId, userBId },
+        userAId_userBId: { userAId, userBId },
       },
       update: {},
       create: { userAId, userBId },
@@ -199,32 +198,28 @@ app.post("/createRoom", authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
-app.post('/addChat',authMiddleware, async(req:Request, res:Response) => {
-     const {roomId , message} = req.body;
-     const senderId = req.userId || "";
-     try {
-       const chat = await prisma.chat.create({
-        data : {
-           roomId,
-           message,
-           senderId
-        }
-       })
+app.post("/addChat", authMiddleware, async (req: Request, res: Response) => {
+  const { roomId, message } = req.body;
+  const senderId = req.userId || "";
+  try {
+    const chat = await prisma.chat.create({
+      data: {
+        roomId,
+        message,
+        senderId,
+      },
+    });
 
-       if(!chat) {
-        return res.status(errorEndle.inputError).json({
-          msg : "unable to save the message"
-        })
-       }
-
-     }catch (err) {
+    if (!chat) {
+      return res.status(errorEndle.inputError).json({
+        msg: "unable to save the message",
+      });
+    }
+  } catch (err) {
     return res.status(errorEndle.serverError).json({
       msg: "server side error",
     });
   }
-})
+});
 
-
-
-
-app.listen(3007)
+app.listen(3007);
